@@ -2,16 +2,16 @@ package com.yhon.ecommerce.controller;
 
 import com.yhon.ecommerce.entitys.Producto;
 import com.yhon.ecommerce.entitys.Usuario;
+import com.yhon.ecommerce.service.FileService;
 import com.yhon.ecommerce.service.ProductoService;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -21,6 +21,9 @@ public class ProductoController {
 
     @Autowired
     private ProductoService productoService;
+
+    @Autowired
+    private FileService fileService;
 
     @GetMapping("")
     public String show(Model model){
@@ -33,12 +36,27 @@ public class ProductoController {
     }
 
     @PostMapping("/save")
-    public String save(Producto producto){
+    public String save(Producto producto, @RequestParam("img") MultipartFile file) throws IOException {
 
         Usuario usuario =new Usuario(1,"","","","","","","");
         producto.setUsuario(usuario);
         System.out.println("este es el producto: "+producto.toString());
         productoService.save(producto);
+        //imagen
+
+        if(producto.getId()==null){//validacion cuando se crea un producto
+            String nombreImgen=fileService.saveImagen(file);
+            producto.setImagen(nombreImgen);
+        }else{
+            if(file.isEmpty()){//se edita el producto pero no se cambia la imagen
+                 Producto p = new Producto();
+                 p=productoService.get(producto.getId()).get();
+                 producto.setImagen(p.getImagen());
+            }else{
+                String nombreImgen=fileService.saveImagen(file);
+                producto.setImagen(nombreImgen);
+            }
+        }
         return "redirect:/productos";
     }
 
@@ -64,6 +82,8 @@ public class ProductoController {
         productoService.delete(id);
         return "redirect:/productos";
     }
+
+
 
 
 }
