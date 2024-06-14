@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.UUID;
 
 @Service
 public class FileService {
 
-    private String folder="imagenes//";
+    private String folder= "imagenes//";
     public String saveImagen(MultipartFile multipartFile) throws IOException {
         if(!multipartFile.isEmpty()){
             byte[] bytes=multipartFile.getBytes();
@@ -24,8 +25,9 @@ public class FileService {
         return "default.jpg";
     }
 
+
     public void deleteImagen(String nombre){
-        String ruta="imagenes//";
+        String ruta= "imagenes//";
         File file=new File(ruta+nombre);
         file.delete();
 
