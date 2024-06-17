@@ -1,15 +1,16 @@
 package com.yhon.ecommerce.controller;
 
+import com.yhon.ecommerce.entitys.DetalleOrden;
+import com.yhon.ecommerce.entitys.Orden;
 import com.yhon.ecommerce.entitys.Producto;
 import com.yhon.ecommerce.service.ProductoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -18,6 +19,9 @@ public class HomeController {
 
     @Autowired
     private ProductoService productoService;
+
+    List<DetalleOrden> listaOrden= new ArrayList<>();
+    Orden orden = new Orden();
 
     @GetMapping("")
     public String home(Model model){
@@ -39,7 +43,13 @@ public class HomeController {
     }
 
     @PostMapping("/cart")
-    public String carrito(){
+    public String carrito(@RequestParam Integer id, @RequestParam Integer cantidad){
+        DetalleOrden detalleOrden = new DetalleOrden();
+        Producto producto = new Producto();
+        double sumaTotal=0;
+        Optional<Producto> optionalProducto= productoService.get(id);
+        System.out.println("producto alladido: "+optionalProducto);
+        System.out.println("cantidad: "+cantidad);
         return "usuario/carrito";
     }
 }
