@@ -3,7 +3,9 @@ package com.yhon.ecommerce.controller;
 import com.yhon.ecommerce.entitys.DetalleOrden;
 import com.yhon.ecommerce.entitys.Orden;
 import com.yhon.ecommerce.entitys.Producto;
+import com.yhon.ecommerce.entitys.Usuario;
 import com.yhon.ecommerce.service.ProductoService;
+import com.yhon.ecommerce.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.Banner;
 import org.springframework.stereotype.Controller;
@@ -22,7 +24,11 @@ public class HomeController {
     private ProductoService productoService;
 
     List<DetalleOrden> listaOrden= new ArrayList<>();
+
     Orden orden = new Orden();
+
+    @Autowired
+    private UsuarioService usuarioService;
 
     @GetMapping("")
     public String home(Model model){
@@ -107,8 +113,13 @@ public class HomeController {
     }
 
     @GetMapping("/orden")
-    public String  getOrden(){
+    public String  getOrden(Model model){
 
+        Usuario usuario=usuarioService.findById(1).get();
+
+        model.addAttribute("cart",listaOrden);
+        model.addAttribute("orden",orden);
+        model.addAttribute("usuario",usuario);
         return "usuario/resumenorden";
     }
 }
